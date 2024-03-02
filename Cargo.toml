@@ -1,0 +1,18 @@
+[package]
+name = "enumap"
+version = "0.1.0"
+authors = ["David Herberth <github@dav1d.de>"]
+description = "A hashmap like interface for enums backed by an array"
+license = "MIT OR Apache-2.0"
+keywords = ["data-structure", "enum", "no_std"]
+categories = ["data-structure", "no_std"]
+repository = "https://github.com/Dav1dde/enumap"
+edition = "2021"
+
+
+[dependencies]
+
+# docs.rs-specific configuration
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
