@@ -28,7 +28,7 @@ used by adding it to your dependencies in your project's `Cargo.toml`.
 
 ```toml
 [dependencies]
-enumap = "0.1"
+enumap = "0.2"
 ```
 
 ## Example
