@@ -1,3 +1,5 @@
+//! A map for enumerations backed by an array.
+
 use core::marker::PhantomData;
 
 use crate::Enum;
@@ -129,7 +131,7 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> EnumMap<LENGTH, E, V> {
     }
 
     /// Creates a consuming iterator visiting all the values in order.
-    /// The map cannot be used after calling this. The iterator element type is V.
+    /// The map cannot be used after calling this. The iterator element type is `V`.
     ///
     /// # Examples
     ///
@@ -171,7 +173,7 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> EnumMap<LENGTH, E, V> {
     }
 
     /// An iterator visiting all key-value pairs in order, with references to the values.
-    /// The iterator element type is (E, &'a V).
+    /// The iterator element type is `(E, &'a V)`.
     ///
     /// # Examples
     ///
@@ -201,7 +203,7 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> EnumMap<LENGTH, E, V> {
     }
 
     /// An iterator visiting all key-value pairs in order, with mutable references to the values.
-    /// The iterator element type is (E, &'a mut V).
+    /// The iterator element type is `(E, &'a mut V)`.
     ///
     /// # Examples
     ///
@@ -395,6 +397,7 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> IntoIterator for &'a EnumMap<L
     }
 }
 
+/// Iterator returned from [`EnumMap::iter`].
 pub struct Iter<'a, const LENGTH: usize, E: Enum<LENGTH>, V> {
     index: usize,
     map: &'a EnumMap<LENGTH, E, V>,
@@ -417,6 +420,7 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for Iter<'a, LENGTH, 
     }
 }
 
+/// Iterator returned from [`EnumMap::keys`].
 pub struct Keys<'a, const LENGTH: usize, E: Enum<LENGTH>, V> {
     inner: Iter<'a, LENGTH, E, V>,
 }
@@ -429,6 +433,7 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for Keys<'a, LENGTH, 
     }
 }
 
+/// Iterator returned from [`EnumMap::values`].
 pub struct Values<'a, const LENGTH: usize, E: Enum<LENGTH>, V> {
     inner: Iter<'a, LENGTH, E, V>,
 }
@@ -441,6 +446,7 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for Values<'a, LENGTH
     }
 }
 
+/// Iterator returned from [`EnumMap::values_mut`].
 pub struct ValuesMut<'a, const LENGTH: usize, E: Enum<LENGTH>, V> {
     inner: IterMut<'a, LENGTH, E, V>,
 }
@@ -453,6 +459,7 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for ValuesMut<'a, LEN
     }
 }
 
+/// Iterator returned from [`EnumMap::into_values`].
 #[allow(clippy::type_complexity)]
 pub struct IntoValues<const LENGTH: usize, E: Enum<LENGTH>, V> {
     inner: core::iter::Filter<core::array::IntoIter<Option<V>, LENGTH>, fn(&Option<V>) -> bool>,
@@ -467,6 +474,7 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for IntoValues<LENGTH, E,
     }
 }
 
+/// Iterator returned from [`EnumMap::iter_mut`].
 pub struct IterMut<'a, const LENGTH: usize, E: Enum<LENGTH>, V> {
     data: Option<&'a mut [Option<V>]>,
     index: usize,
@@ -494,6 +502,7 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for IterMut<'a, LENGT
     }
 }
 
+/// Iterator returned from [`EnumMap::into_iter`].
 pub struct IntoIter<const LENGTH: usize, E: Enum<LENGTH>, V> {
     index: usize,
     map: EnumMap<LENGTH, E, V>,

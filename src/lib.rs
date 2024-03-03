@@ -1,6 +1,6 @@
 //! HashMap like interface for enumerations backed by an array.
 //!
-//! `enumap` is `no_std` compatible and proc macro free for fast compilation speeds.
+//! `enumap` is `no_std` compatible, dependency and proc macro free for blazingly fast compilation speeds.
 //!
 //! ```
 //! use enumap::EnumMap;
@@ -29,7 +29,28 @@
 //! }
 //! ```
 //!
-//! # Implementing Enum
+//! # Use Niches
+//!
+//! The map is backed by an array of options `[Option<V>; N]`,
+//! consider using values with a gurantueed niche to optimize the size of the map:
+//!
+//! ```
+//! use enumap::EnumMap;
+//! use std::num::NonZeroUsize;
+//!
+//! enumap::enumap! {
+//!     #[derive(Debug)]
+//!     enum Fruit {
+//!         Orange,
+//!         Banana
+//!     }
+//! }
+//!
+//! assert_eq!(std::mem::size_of::<EnumMap<2, Fruit, usize>>(), 32);
+//! assert_eq!(std::mem::size_of::<EnumMap<2, Fruit, NonZeroUsize>>(), 16);
+//! ```
+//!
+//! # Advanced: Implementing Enum
 //!
 //! While the crate was built with enums in mind, it is just a generic map
 //! implementation backed by an array which only requires a bijective mapping
@@ -71,27 +92,45 @@
 //! assert_eq!(map.get(five), None);
 //! ```
 //!
-//! # Use Niches
-//!
-//! The map is backed by an array of options `[Option<V>; N]`,
-//! consider using values with a gurantueed niche to optimize the size of the map:
+//! Of course this is also possible for enums with attached data:
 //!
 //! ```
-//! use enumap::EnumMap;
-//! use std::num::NonZeroUsize;
+//! use enumap::{Enum, EnumMap};
 //!
-//! enumap::enumap! {
-//!     #[derive(Debug)]
-//!     enum Fruit {
-//!         Orange,
-//!         Banana
+//! #[derive(Copy, Clone)]
+//! enum Foo {
+//!     Always,
+//!     Maybe(bool),
+//! }
+//!
+//! impl Enum<3> for Foo {
+//!     fn from_index(index: usize) -> Option<Self> {
+//!         match index {
+//!             0 => Some(Self::Always),
+//!             1 => Some(Self::Maybe(true)),
+//!             2 => Some(Self::Maybe(false)),
+//!             _ => None,
+//!         }
+//!     }
+//!
+//!     fn to_index(value: Self) -> usize {
+//!         match value {
+//!             Self::Always => 0,
+//!             Self::Maybe(true) => 1,
+//!             Self::Maybe(false) => 2,
+//!         }
 //!     }
 //! }
 //!
-//! assert_eq!(std::mem::size_of::<EnumMap<2, Fruit, usize>>(), 32);
-//! assert_eq!(std::mem::size_of::<EnumMap<2, Fruit, NonZeroUsize>>(), 16);
-//! ```
+//! let mut map = EnumMap::from([
+//!     (Foo::Always, "foo"),
+//!     (Foo::Maybe(true), "bar"),
+//! ]);
 //!
+//! assert_eq!(map[Foo::Always], "foo");
+//! assert_eq!(map[Foo::Maybe(true)], "bar");
+//! assert_eq!(map.get(Foo::Maybe(false)), None);
+//! ```
 #![no_std]
 
 mod enum_macro;
