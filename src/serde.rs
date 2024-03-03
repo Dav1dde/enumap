@@ -63,7 +63,7 @@ where
 mod tests {
     use serde::{Deserialize, Serialize};
 
-    use crate::{enumap, EnumMap};
+    use crate::{enumap, Enum, EnumMap};
 
     enumap! {
         #[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
@@ -86,7 +86,7 @@ mod tests {
 
     #[test]
     fn test_enum_map_serialize_empty() {
-        let map = EnumMap::<4, Foo, i32>::new();
+        let map = EnumMap::<{ Foo::LENGTH }, Foo, i32>::new();
 
         let s = serde_json::to_string(&map).unwrap();
         assert_eq!(s, r#"{}"#);
@@ -94,13 +94,14 @@ mod tests {
 
     #[test]
     fn test_enum_map_deserialize() {
-        let m: EnumMap<4, Foo, i32> = serde_json::from_str(r#"{"a":1,"b":2,"c":3}"#).unwrap();
+        let m: EnumMap<{ Foo::LENGTH }, Foo, i32> =
+            serde_json::from_str(r#"{"a":1,"b":2,"c":3}"#).unwrap();
         assert_eq!(m, EnumMap::from([(Foo::C, 3), (Foo::B, 2), (Foo::A, 1)]));
     }
 
     #[test]
     fn test_enum_map_deserialize_empty() {
-        let m: EnumMap<4, Foo, i32> = serde_json::from_str(r#"{}"#).unwrap();
+        let m: EnumMap<{ Foo::LENGTH }, Foo, i32> = serde_json::from_str(r#"{}"#).unwrap();
         assert_eq!(m, EnumMap::new());
     }
 }

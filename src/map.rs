@@ -353,6 +353,16 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> Default for EnumMap<LENGTH, E, V> 
     }
 }
 
+/// # Examples
+///
+/// ```
+/// # enumap::enumap! { #[derive(Debug, PartialEq)] enum Fruit { Orange, Banana, Grape, } }
+/// use enumap::{EnumMap, Enum};
+///
+/// let map1 = EnumMap::from([(Fruit::Orange, 1), (Fruit::Banana, 2)]);
+/// let map2: EnumMap<{ Fruit::LENGTH }, _, _> = [(Fruit::Orange, 1), (Fruit::Banana, 2)].into();
+/// assert_eq!(map1, map2);
+/// ````
 impl<const LENGTH: usize, E: Enum<LENGTH>, V, const N: usize> From<[(E, V); N]>
     for EnumMap<LENGTH, E, V>
 {
@@ -364,10 +374,19 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V, const N: usize> From<[(E, V); N]>
 impl<const LENGTH: usize, E: Enum<LENGTH>, V> FromIterator<(E, V)> for EnumMap<LENGTH, E, V> {
     fn from_iter<T: IntoIterator<Item = (E, V)>>(iter: T) -> Self {
         let mut map = Self::new();
-        for (k, v) in iter {
-            map.insert(k, v);
-        }
+        map.extend(iter);
         map
+    }
+}
+
+/// Inserts all new key-values from the iterator and replaces values with existing
+/// keys with new values returned from the iterator.
+impl<const LENGTH: usize, E: Enum<LENGTH>, V> Extend<(E, V)> for EnumMap<LENGTH, E, V> {
+    #[inline]
+    fn extend<T: IntoIterator<Item = (E, V)>>(&mut self, iter: T) {
+        for (k, v) in iter {
+            self.insert(k, v);
+        }
     }
 }
 
