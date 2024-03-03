@@ -134,6 +134,8 @@
 #![no_std]
 
 mod enum_macro;
+#[cfg(feature = "serde")]
+mod serde;
 
 pub mod map;
 

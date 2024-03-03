@@ -15,7 +15,7 @@ use crate::Enum;
 /// An incorrectly implemented [`Enum`] trait will not cause undefined behaviour but
 /// may introduce random panics and incorrect results. Consider using the [`enumap`](crate::enumap)
 /// macro to implement [`Enum`] correctly.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct EnumMap<const LENGTH: usize, E: Enum<LENGTH>, V> {
     data: [Option<V>; LENGTH],
     _enum: PhantomData<E>,

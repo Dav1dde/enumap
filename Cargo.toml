@@ -9,8 +9,15 @@ categories = ["data-structure", "no_std"]
 repository = "https://github.com/Dav1dde/enumap"
 edition = "2021"
 
+[features]
+serde = ["dep:serde"]
 
 [dependencies]
+serde = { version = "1", default-features = false, optional = true }
+
+[dev-dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 # docs.rs-specific configuration
 [package.metadata.docs.rs]
