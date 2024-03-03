@@ -29,6 +29,21 @@
 //! }
 //! ```
 //!
+//! # Differences and Alternatives
+//!
+//! Why would you want to use `enumap` over one of the alternatives:
+//!
+//! - `strum`'s `EnumTable`
+//! - `array_map`
+//! - `enum_map`
+//!
+//! All of these crates expect you to fully initialize the mapping on
+//! construction of the map/table. `enumap` is always backed by an optional
+//! storage and therefor can provide a much better API which follows the `HashMap` API.
+//!
+//! `enumap` does not rely on a proc macro and is dependency free
+//! which makes it overall a more lightweight and faster compiling dependency.
+//!
 //! # Use Niches
 //!
 //! The map is backed by an array of options `[Option<V>; N]`,
