@@ -5,7 +5,7 @@ authors = ["David Herberth <github@dav1d.de>"]
 description = "A hashmap like interface for enums backed by an array"
 license = "MIT OR Apache-2.0"
 keywords = ["data-structure", "enum", "no_std"]
-categories = ["data-structure", "no_std"]
+categories = ["embedded", "data-structures", "no-std", "no-std::no-alloc"]
 repository = "https://github.com/Dav1dde/enumap"
 edition = "2021"
 
