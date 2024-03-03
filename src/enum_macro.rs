@@ -44,6 +44,7 @@
 /// # assert!(matches!(Fruit::from_index(1), Some(Fruit::Banana)));
 /// # assert!(matches!(Fruit::from_index(2), Some(Fruit::Grape)));
 /// # assert!(matches!(Fruit::from_index(3), None));
+/// # assert_eq!(Fruit::LENGTH, 3);
 /// ```
 #[macro_export]
 macro_rules! enumap {
