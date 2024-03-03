@@ -227,8 +227,7 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> EnumMap<LENGTH, E, V> {
     /// ```
     pub fn iter_mut(&mut self) -> IterMut<'_, LENGTH, E, V> {
         IterMut {
-            data: Some(&mut self.data),
-            index: 0,
+            inner: self.data.iter_mut().enumerate(),
             _enum: PhantomData,
         }
     }
@@ -505,8 +504,7 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for IntoValues<LENGTH, E,
 
 /// Iterator returned from [`EnumMap::iter_mut`].
 pub struct IterMut<'a, const LENGTH: usize, E: Enum<LENGTH>, V> {
-    data: Option<&'a mut [Option<V>]>,
-    index: usize,
+    inner: core::iter::Enumerate<core::slice::IterMut<'a, Option<V>>>,
     _enum: PhantomData<E>,
 }
 
@@ -514,20 +512,13 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for IterMut<'a, LENGT
     type Item = (E, &'a mut V);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.data.take().and_then(|mut data| {
-            let mut index = self.index;
-            let (element, tail) = loop {
-                let (head, tail) = data.split_first_mut()?;
-                self.index += 1;
-                if let Some(head) = head {
-                    break (head, tail);
-                }
-                index += 1;
-                data = tail;
-            };
-            self.data = Some(tail);
-            Some((E::from_index(index)?, element))
-        })
+        for (i, v) in self.inner.by_ref() {
+            if let Some(v) = v.as_mut() {
+                return Some((E::from_index(i)?, v));
+            }
+        }
+
+        None
     }
 }
 
