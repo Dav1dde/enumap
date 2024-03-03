@@ -36,7 +36,7 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> EnumMap<LENGTH, E, V> {
         }
     }
 
-    /// Returns the underlying data as a slice.
+    /// Returns a slice of the underlying array.
     ///
     /// # Examples
     ///
@@ -56,6 +56,35 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> EnumMap<LENGTH, E, V> {
     /// ```
     pub fn as_slice(&self) -> &[Option<V>; LENGTH] {
         &self.data
+    }
+
+    /// Returns a mutable slice of the underlying array.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use enumap::EnumMap;
+    ///
+    /// enumap::enumap! {
+    ///     #[derive(Debug)]
+    ///     enum Fruit {
+    ///         Orange,
+    ///         Banana,
+    ///     }
+    /// }
+    ///
+    /// let mut map = EnumMap::from([(Fruit::Banana, 5)]);
+    ///
+    /// for value in map.as_mut_slice() {
+    ///     if let Some(value) = value.as_mut() {
+    ///         *value *= 2;
+    ///     }
+    /// }
+    ///
+    /// assert_eq!(map[Fruit::Banana], 10);
+    /// ```
+    pub fn as_mut_slice(&mut self) -> &mut [Option<V>; LENGTH] {
+        &mut self.data
     }
 
     /// Clears the map, removing all key-value pairs.
@@ -382,12 +411,46 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> Default for EnumMap<LENGTH, E, V> 
 /// let map1 = EnumMap::from([(Fruit::Orange, 1), (Fruit::Banana, 2)]);
 /// let map2: EnumMap<{ Fruit::LENGTH }, _, _> = [(Fruit::Orange, 1), (Fruit::Banana, 2)].into();
 /// assert_eq!(map1, map2);
-/// ````
+/// ```
 impl<const LENGTH: usize, E: Enum<LENGTH>, V, const N: usize> From<[(E, V); N]>
     for EnumMap<LENGTH, E, V>
 {
     fn from(value: [(E, V); N]) -> Self {
         Self::from_iter(value)
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// # enumap::enumap! { #[derive(Debug, PartialEq)] enum Fruit { Orange, Banana, Grape, } }
+/// use enumap::EnumMap;
+///
+/// let map = EnumMap::from([None, Some(1), None]);
+/// assert_eq!(map[Fruit::Banana], 1);
+/// assert!(map.get(Fruit::Orange).is_none());
+/// ```
+impl<const LENGTH: usize, E: Enum<LENGTH>, V> From<[Option<V>; LENGTH]> for EnumMap<LENGTH, E, V> {
+    fn from(value: [Option<V>; LENGTH]) -> Self {
+        Self {
+            data: value,
+            _enum: PhantomData,
+        }
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// # enumap::enumap! { #[derive(Debug, PartialEq)] enum Fruit { Orange, Banana, Grape, } }
+/// use enumap::{EnumMap, Enum};
+///
+/// let map = EnumMap::from([(Fruit::Banana, 1)]);
+/// assert_eq!(<[_; { Fruit::LENGTH }]>::from(map), [None, Some(1), None]);
+/// ```
+impl<const LENGTH: usize, E: Enum<LENGTH>, V> From<EnumMap<LENGTH, E, V>> for [Option<V>; LENGTH] {
+    fn from(value: EnumMap<LENGTH, E, V>) -> Self {
+        value.data
     }
 }
 

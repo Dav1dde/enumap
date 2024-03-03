@@ -372,6 +372,28 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, const N: usize> From<[E; N]> for Enum
     }
 }
 
+/// Converts an `EnumMap` into an `EnumSet` containing all of the map's keys.
+///
+/// # Examples
+///
+/// ```
+/// # enumap::enumap! { #[derive(Debug, PartialEq)] enum Fruit { Orange, Banana, Grape, } }
+/// use enumap::{EnumMap, EnumSet};
+///
+/// let map = EnumMap::from([(Fruit::Banana, 100), (Fruit::Grape, 200)]);
+/// let set = EnumSet::from(map);
+///
+/// assert!(set.contains(Fruit::Banana));
+/// assert!(set.contains(Fruit::Grape));
+/// assert!(!set.contains(Fruit::Orange));
+/// ```
+impl<const LENGTH: usize, E: Enum<LENGTH>, V> From<EnumMap<LENGTH, E, V>> for EnumSet<LENGTH, E> {
+    fn from(value: EnumMap<LENGTH, E, V>) -> Self {
+        let data: [_; LENGTH] = value.into();
+        Self(data.map(|v| v.map(|_| ())).into())
+    }
+}
+
 impl<const LENGTH: usize, E: Enum<LENGTH>> FromIterator<E> for EnumSet<LENGTH, E> {
     fn from_iter<T: IntoIterator<Item = E>>(iter: T) -> Self {
         let mut set = Self::new();
