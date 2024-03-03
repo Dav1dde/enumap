@@ -150,8 +150,7 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> EnumMap<LENGTH, E, V> {
     /// ```
     pub fn into_values(self) -> IntoValues<LENGTH, E, V> {
         IntoValues {
-            inner: self.data.into_iter().filter(Option::is_some),
-            _enum: PhantomData,
+            inner: self.into_iter(),
         }
     }
 
@@ -488,17 +487,15 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for ValuesMut<'a, LEN
 }
 
 /// Iterator returned from [`EnumMap::into_values`].
-#[allow(clippy::type_complexity)]
 pub struct IntoValues<const LENGTH: usize, E: Enum<LENGTH>, V> {
-    inner: core::iter::Filter<core::array::IntoIter<Option<V>, LENGTH>, fn(&Option<V>) -> bool>,
-    _enum: PhantomData<E>,
+    inner: IntoIter<LENGTH, E, V>,
 }
 
 impl<const LENGTH: usize, E: Enum<LENGTH>, V> Iterator for IntoValues<LENGTH, E, V> {
     type Item = V;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.inner.next().flatten()
+        self.inner.next().map(|(_, v)| v)
     }
 }
 
