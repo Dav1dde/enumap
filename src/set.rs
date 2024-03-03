@@ -1,3 +1,5 @@
+//! A set for enumerations backed by an array.
+
 use core::{fmt, marker::PhantomData};
 
 use crate::{map, Enum, EnumMap};
@@ -372,45 +374,45 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, const N: usize> From<[E; N]> for Enum
     }
 }
 
-/// Converts an `EnumMap` into an `EnumSet` containing all of the map's keys.
-///
-/// # Examples
-///
-/// ```
-/// # enumap::enumap! { #[derive(Debug, PartialEq)] enum Fruit { Orange, Banana, Grape, } }
-/// use enumap::{EnumMap, EnumSet};
-///
-/// let map = EnumMap::from([(Fruit::Banana, 100), (Fruit::Grape, 200)]);
-/// let set = EnumSet::from(map);
-///
-/// assert!(set.contains(Fruit::Banana));
-/// assert!(set.contains(Fruit::Grape));
-/// assert!(!set.contains(Fruit::Orange));
-/// ```
 impl<const LENGTH: usize, E: Enum<LENGTH>, V> From<EnumMap<LENGTH, E, V>> for EnumSet<LENGTH, E> {
+    /// Converts an `EnumMap` into an `EnumSet` containing all of the map's keys.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # enumap::enumap! { #[derive(Debug, PartialEq)] enum Fruit { Orange, Banana, Grape, } }
+    /// use enumap::{EnumMap, EnumSet};
+    ///
+    /// let map = EnumMap::from([(Fruit::Banana, 100), (Fruit::Grape, 200)]);
+    /// let set = EnumSet::from(map);
+    ///
+    /// assert!(set.contains(Fruit::Banana));
+    /// assert!(set.contains(Fruit::Grape));
+    /// assert!(!set.contains(Fruit::Orange));
+    /// ```
     fn from(value: EnumMap<LENGTH, E, V>) -> Self {
         let data: [_; LENGTH] = value.into();
         Self(data.map(|v| v.map(|_| ())).into())
     }
 }
 
-/// Converts an `&EnumMap` into an `EnumSet` containing all of the map's keys.
-///
-/// # Examples
-///
-/// ```
-/// # enumap::enumap! { #[derive(Debug, PartialEq)] enum Fruit { Orange, Banana, Grape, } }
-/// use enumap::{EnumMap, EnumSet};
-///
-/// let map = EnumMap::from([(Fruit::Banana, 100), (Fruit::Grape, 200)]);
-/// let set = EnumSet::from(&map);
-///
-/// assert_eq!(set.len(), map.len());
-/// for fruit in set {
-///     assert!(map.contains_key(fruit));
-/// }
-/// ```
 impl<const LENGTH: usize, E: Enum<LENGTH>, V> From<&EnumMap<LENGTH, E, V>> for EnumSet<LENGTH, E> {
+    /// Converts an `&EnumMap` into an `EnumSet` containing all of the map's keys.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # enumap::enumap! { #[derive(Debug, PartialEq)] enum Fruit { Orange, Banana, Grape, } }
+    /// use enumap::{EnumMap, EnumSet};
+    ///
+    /// let map = EnumMap::from([(Fruit::Banana, 100), (Fruit::Grape, 200)]);
+    /// let set = EnumSet::from(&map);
+    ///
+    /// assert_eq!(set.len(), map.len());
+    /// for fruit in set {
+    ///     assert!(map.contains_key(fruit));
+    /// }
+    /// ```
     fn from(value: &EnumMap<LENGTH, E, V>) -> Self {
         let data = value.as_slice();
         Self(core::array::from_fn(|i| data[i].is_some().then_some(())).into())
