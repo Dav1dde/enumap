@@ -1,6 +1,6 @@
 [package]
 name = "enumap"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["David Herberth <github@dav1d.de>"]
 description = "A HashMap and HashSet like interface for enums backed by an array"
 license = "MIT OR Apache-2.0"
