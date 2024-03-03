@@ -1,9 +1,9 @@
-//! HashMap like interface for enumerations backed by an array.
+//! HashMap and HashSet like interfaces for enumerations backed by an array.
 //!
 //! `enumap` is `no_std` compatible, dependency and proc macro free for blazingly fast compilation speeds.
 //!
 //! ```
-//! use enumap::EnumMap;
+//! use enumap::{EnumMap, EnumSet};
 //!
 //! enumap::enumap! {
 //!     /// A beautiful fruit, ready to be sold.
@@ -17,6 +17,8 @@
 //!
 //! // A fruit shop: fruit -> stock.
 //! let mut shop = EnumMap::new();
+//! let mut orders = EnumSet::new();
+//!
 //! shop.insert(Fruit::Orange, 100);
 //! shop.insert(Fruit::Banana, 200);
 //!
@@ -26,6 +28,11 @@
 //!
 //! if !shop.contains_key(Fruit::Grape) {
 //!     println!("Sorry no grapes in stock :(");
+//!     orders.insert(Fruit::Grape);
+//! }
+//!
+//! for fruit in &orders {
+//!     println!("{fruit:?} needs to be ordered!");
 //! }
 //! ```
 //!
@@ -43,6 +50,8 @@
 //!
 //! `enumap` does not rely on a proc macro and is dependency free
 //! which makes it overall a more lightweight and faster compiling dependency.
+//!
+//! These crates do not have support for sets.
 //!
 //! # Use Niches
 //!
@@ -153,8 +162,10 @@ mod enum_macro;
 mod serde;
 
 pub mod map;
+pub mod set;
 
 pub use self::map::EnumMap;
+pub use self::set::EnumSet;
 
 /// Enum type, usually implemented using the [`enumap`] macro.
 ///

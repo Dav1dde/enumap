@@ -36,6 +36,28 @@ impl<const LENGTH: usize, E: Enum<LENGTH>, V> EnumMap<LENGTH, E, V> {
         }
     }
 
+    /// Returns the underlying data as a slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use enumap::EnumMap;
+    ///
+    /// enumap::enumap! {
+    ///     #[derive(Debug)]
+    ///     enum Fruit {
+    ///         Orange,
+    ///         Banana,
+    ///     }
+    /// }
+    ///
+    /// let map = EnumMap::from([(Fruit::Banana, 5)]);
+    /// assert_eq!(map.as_slice(), &[None, Some(5)]);
+    /// ```
+    pub fn as_slice(&self) -> &[Option<V>; LENGTH] {
+        &self.data
+    }
+
     /// Clears the map, removing all key-value pairs.
     ///
     /// # Examples
