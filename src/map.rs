@@ -1,6 +1,6 @@
 //! A map for enumerations backed by an array.
 
-use core::marker::PhantomData;
+use core::{fmt, marker::PhantomData};
 
 use crate::Enum;
 
@@ -394,6 +394,16 @@ impl<'a, const LENGTH: usize, E: Enum<LENGTH>, V> IntoIterator for &'a EnumMap<L
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter()
+    }
+}
+
+impl<const LENGTH: usize, E: Enum<LENGTH>, V> fmt::Debug for EnumMap<LENGTH, E, V>
+where
+    E: fmt::Debug,
+    V: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_map().entries(self.iter()).finish()
     }
 }
 
